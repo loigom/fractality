@@ -6,14 +6,6 @@ body, html {
     z-index: 1;
 }
 
-#dragBox {
-    position: absolute;
-    z-index: 3;
-    background-color: rgba(255, 166, 0, 0.8);
-    border-style: solid;
-    border:2px;
-}
-
 #infoBox {
     margin: 6px;
     position: absolute;

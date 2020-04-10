@@ -1,17 +1,20 @@
 /* Things related to rendering */
-let MAX_ITER = 35 // Amount of "passes" to do during rendering. Higher -> better fractal detail.
-const MOD_CONST = 4 // Variable to determine if a pixel/complex number has escaped.
+const MAX_ITER_DEFAULT = 50;
+let MAX_ITER = MAX_ITER_DEFAULT; // Amount of "passes" to do during rendering. Higher -> better fractal detail.
+const MOD_CONST = 4; // Variable to determine if a pixel/complex number has escaped.
 
+const RE_START_DEFAULT = -2;
+const RE_END_DEFAULT = 1;
+const IM_START_DEFAULT = -1;
+const IM_END_DEFAULT = 1;
 
-let RE_START = -2 // These 4 are for determining the boundaries.
-let RE_END = 1
-let IM_START = -1
-let IM_END = 1
+let RE_START = RE_START_DEFAULT; // These 4 are for determining the boundaries.
+let RE_END = RE_END_DEFAULT;
+let IM_START = IM_START_DEFAULT;
+let IM_END = IM_END_DEFAULT;
 
 let RE_START_NEW;
-let RE_END_NEW;
 let IM_START_NEW;
-let IM_END_NEW;
 
 /* ------------------- */
 
@@ -39,14 +42,37 @@ canvas.onmouseup = function(e) {
     [RE_END, IM_END] = screenToComplexCoords(e.clientX, e.clientY);
     RE_START = RE_START_NEW;
     IM_START = IM_START_NEW;
-    MAX_ITER *= 10;
-    if (MAX_ITER > 7000) {
-        MAX_ITER = 7000;
+    startRender();
+}
+/* ------------------- */
+
+/* Other */
+let iterationsInput = document.getElementById("iterationsInput");
+iterationsInput.value = `${MAX_ITER_DEFAULT}`;
+iterationsInput.innerHTML = MAX_ITER_DEFAULT;
+document.getElementById("resetButton").onclick = function() {
+    RE_START = RE_START_DEFAULT;
+    RE_END = RE_END_DEFAULT;
+    IM_START = IM_START_DEFAULT;
+    IM_END = IM_END_DEFAULT;
+    startRender();
+}
+document.getElementById("iterationsInputApply").onclick = function() {
+    let inp = parseInt(iterationsInput.value);
+    if (inp != NaN && inp > 0) {
+        MAX_ITER = inp;
+        startRender();
     }
+    else {
+        iterationsInput.value = `${MAX_ITER_DEFAULT}`;
+    }
+}
+/* ------------------- */
+
+function startRender() {
     y = 0;
     RENDERING = true;
 }
-/* ------------------- */
 
 function screenToComplexCoords(x, y) {
     let realPerPixel = Math.abs(RE_START - RE_END) / window.innerWidth;
@@ -92,18 +118,14 @@ function draw() {
     }
 }
 
-function complex_squared(real, imag) {
-    let newReal = real * real - imag * imag;
-    let newImag = 2 * real * imag;
-    return [newReal, newImag];
-}
-
 function mandelbrot(real_constant, imag_constant) {
     let iters = real = imag = 0;
-    while ((real*real + imag*imag) <= MOD_CONST && iters < MAX_ITER) {
-        [real, imag] = complex_squared(real, imag);
-        real += real_constant;
-        imag += imag_constant;
+    let realSq, imagSq, newReal, newImag;
+    while ((realSq = real*real) + (imagSq = imag*imag) <= MOD_CONST && iters < MAX_ITER) {
+        newReal = realSq - imagSq + real_constant;
+        newImag = 2 * real * imag + imag_constant;
+        real = newReal;
+        imag = newImag;
         iters++;
     }
     return iters;
