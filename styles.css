@@ -22,6 +22,6 @@ body, html {
 }
 
 #region {
-    border: 1px dotted #fff;
+    border: 1px solid orange;
     position: absolute;
 }

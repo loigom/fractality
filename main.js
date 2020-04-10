@@ -15,7 +15,6 @@ let IM_END = IM_END_DEFAULT;
 
 let RE_START_NEW;
 let IM_START_NEW;
-
 /* ------------------- */
 
 /* These variables are for thread control so the entire window isn't blocked until the entire fractal is finished rendering. */
@@ -64,13 +63,8 @@ canvas.onmouseup = function(e) {
     startRender();
 }
 
-regionBox.onmousemove = function(e) {
-    canvas.onmousemove(e);
-}
-
-regionBox.onmouseup = function (e) {
-    canvas.onmouseup(e);
-}
+regionBox.onmousemove = canvas.onmousemove;
+regionBox.onmouseup = canvas.onmouseup;
 
 function calculateRegionBox() {
     x1 = Math.min(regionBoxXStart, regionBoxXEnd);
@@ -84,7 +78,25 @@ function calculateRegionBox() {
     regionBox.style.top = y1 + "px";
     regionBox.style.height = (y2 - y1) + "px";
 }
+/* ------------------- */
 
+/* Color palette checkboxes */
+let greyscale = document.getElementById("greyscaleCheckbox");
+let greenscale = document.getElementById("greenscaleCheckbox");
+let bluescale = document.getElementById("bluescaleCheckbox");
+let redscale = document.getElementById("redscaleCheckbox");
+let palettes = [greyscale, greenscale, bluescale, redscale];
+
+let CURRENT_COLOR = greenscale;
+CURRENT_COLOR.checked = 1;
+
+for (let i = 0; i < palettes.length; i++) {
+    palettes[i].onclick = function() {
+        CURRENT_COLOR.checked = 0;
+        palettes[i].checked = 1;
+        CURRENT_COLOR = palettes[i];
+    }
+}
 /* ------------------- */
 
 /* Other */
@@ -131,7 +143,18 @@ function setRBG(iters) {
     let quotinent = iters / MAX_ITER;
     if (quotinent > 0.9) { return BLACK; }
     let rgb = Math.floor((255 / MAX_ITER) * iters);
-    return [rgb, rgb, rgb];
+    if (greyscale.checked) {
+        return [rgb, rgb, rgb];
+    }
+    else if (redscale.checked) {
+        return [rgb, 0, 0];
+    }
+    else if (greenscale.checked) {
+        return [0, rgb, 0];
+    }
+    else {
+        return [0, 0, rgb];
+    }
 }
 
 function draw() {
