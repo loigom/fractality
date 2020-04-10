@@ -35,15 +35,56 @@ const canvas = document.getElementById("canv");
 const ctx = canvas.getContext("2d");
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
+
+const regionBox = document.getElementById("region"); /* Visual representation of the region that the user wants to zoom into */
+regionBoxXStart = 0;
+regionBoxYStart = 0;
+regionBoxXEnd = 0;
+regionBoxYEnd = 0;
+
 canvas.onmousedown = function(e) {
+    regionBox.hidden = 0;
+    regionBoxXStart = e.clientX;
+    regionBoxYStart = e.clientY;
+    calculateRegionBox();
     [RE_START_NEW, IM_START_NEW] = screenToComplexCoords(e.clientX, e.clientY);
 }
+
+canvas.onmousemove = function (e) {
+    regionBoxXEnd = e.clientX;
+    regionBoxYEnd = e.clientY;
+    calculateRegionBox();
+}
+
 canvas.onmouseup = function(e) {
+    regionBox.hidden = 1;
     [RE_END, IM_END] = screenToComplexCoords(e.clientX, e.clientY);
     RE_START = RE_START_NEW;
     IM_START = IM_START_NEW;
     startRender();
 }
+
+regionBox.onmousemove = function(e) {
+    canvas.onmousemove(e);
+}
+
+regionBox.onmouseup = function (e) {
+    canvas.onmouseup(e);
+}
+
+function calculateRegionBox() {
+    x1 = Math.min(regionBoxXStart, regionBoxXEnd);
+    x2 = Math.max(regionBoxXStart, regionBoxXEnd); 
+
+    y1 = Math.min(regionBoxYStart, regionBoxYEnd);
+    y2 = Math.max(regionBoxYStart, regionBoxYEnd); 
+
+    regionBox.style.left = x1 + "px";
+    regionBox.style.width = (x2 - x1) + "px";
+    regionBox.style.top = y1 + "px";
+    regionBox.style.height = (y2 - y1) + "px";
+}
+
 /* ------------------- */
 
 /* Other */
