@@ -3,11 +3,28 @@ body, html {
     height: 100%;
     margin: 0;
     overflow: hidden;
+    z-index: 1;
+}
+
+#dragBox {
+    position: absolute;
+    z-index: 3;
+    background-color: rgba(255, 166, 0, 0.8);
+    border-style: solid;
+    border:2px;
 }
 
 #infoBox {
     margin: 6px;
     position: absolute;
-    background-color: "rgba(0, 0, 0, 0.8)";
+    background-color: rgba(0, 0, 0, 0.8);
     color: white;
+    z-index: 2;
+    border-style: solid;
+    border: 1px;
+    border-radius: 2px;
+}
+
+.infoElements {
+    margin: 2px;
 }
