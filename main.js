@@ -15,6 +15,8 @@ let IM_END = IM_END_DEFAULT;
 
 let RE_START_NEW;
 let IM_START_NEW;
+
+const IDEAL_ASPECT = window.innerWidth / window.innerHeight;
 /* ------------------- */
 
 /* These variables are for thread control so the entire window isn't blocked until the entire fractal is finished rendering. */
@@ -36,10 +38,10 @@ canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
 const regionBox = document.getElementById("region"); /* Visual representation of the region that the user wants to zoom into */
-regionBoxXStart = 0;
-regionBoxYStart = 0;
-regionBoxXEnd = 0;
-regionBoxYEnd = 0;
+let regionBoxXStart = 0;
+let regionBoxYStart = 0;
+let regionBoxXEnd = 0;
+let regionBoxYEnd = 0;
 
 canvas.onmousedown = function(e) {
     regionBox.hidden = 0;
@@ -58,8 +60,13 @@ canvas.onmousemove = function (e) {
 canvas.onmouseup = function(e) {
     regionBox.hidden = 1;
     [RE_END, IM_END] = screenToComplexCoords(e.clientX, e.clientY);
-    RE_START = RE_START_NEW;
-    IM_START = IM_START_NEW;
+    [RE_START, IM_START] = [RE_START_NEW, IM_START_NEW];
+    if (RE_START > RE_END) {
+        [RE_START, RE_END] = [RE_END, RE_START];
+    }
+    if (IM_START > IM_END) {
+        [IM_START, IM_END] = [IM_END, IM_START];
+    }
     startRender();
 }
 
@@ -67,11 +74,8 @@ regionBox.onmousemove = canvas.onmousemove;
 regionBox.onmouseup = canvas.onmouseup;
 
 function calculateRegionBox() {
-    x1 = Math.min(regionBoxXStart, regionBoxXEnd);
-    x2 = Math.max(regionBoxXStart, regionBoxXEnd); 
-
-    y1 = Math.min(regionBoxYStart, regionBoxYEnd);
-    y2 = Math.max(regionBoxYStart, regionBoxYEnd); 
+    let [x1, x2] = [regionBoxXStart, regionBoxXEnd].sort();
+    let [y1, y2] = [regionBoxYStart, regionBoxYEnd].sort();
 
     regionBox.style.left = x1 + "px";
     regionBox.style.width = (x2 - x1) + "px";
@@ -104,6 +108,8 @@ let iterationsInput = document.getElementById("iterationsInput");
 iterationsInput.value = `${MAX_ITER_DEFAULT}`;
 iterationsInput.innerHTML = MAX_ITER_DEFAULT;
 document.getElementById("resetButton").onclick = function() {
+    MAX_ITER = MAX_ITER_DEFAULT;
+    iterationsInput.value = `${MAX_ITER_DEFAULT}`;
     RE_START = RE_START_DEFAULT;
     RE_END = RE_END_DEFAULT;
     IM_START = IM_START_DEFAULT;
@@ -164,16 +170,15 @@ function draw() {
             y = 0;
         }
         else {
-            let x, real, imag, iters, r, g, b;
             let i = ROWS_PER_TICK;
             let realDistance = RE_END - RE_START;
             let imagDistance = IM_END - IM_START;
             while (y < canvas.height && i--) {
-                for (x = 0; x < canvas.width; x++) {
-                    real = RE_START + (x / canvas.width) * realDistance;
-                    imag = IM_START + (y / canvas.height) * imagDistance;
-                    iters = mandelbrot(real, imag);
-                    [r, g, b] = setRBG(iters);
+                for (let x = 0; x < canvas.width; x++) {
+                    let real = RE_START + (x / canvas.width) * realDistance;
+                    let imag = IM_START + (y / canvas.height) * imagDistance;
+                    let iters = mandelbrot(real, imag);
+                    let [r, g, b] = setRBG(iters);
                     setPixel(x, y, r, g, b);
                 }
                 y++;
