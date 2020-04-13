@@ -67,15 +67,15 @@ canvas.onmouseup = function(e) {
     if (IM_START > IM_END) {
         [IM_START, IM_END] = [IM_END, IM_START];
     }
-    startRender();
+   startRender();
 }
 
 regionBox.onmousemove = canvas.onmousemove;
 regionBox.onmouseup = canvas.onmouseup;
 
 function calculateRegionBox() {
-    let [x1, x2] = [regionBoxXStart, regionBoxXEnd].sort();
-    let [y1, y2] = [regionBoxYStart, regionBoxYEnd].sort();
+    let [x1, x2] = [regionBoxXStart, regionBoxXEnd].sort(compareFunc);
+    let [y1, y2] = [regionBoxYStart, regionBoxYEnd].sort(compareFunc);
 
     regionBox.style.left = x1 + "px";
     regionBox.style.width = (x2 - x1) + "px";
@@ -132,6 +132,8 @@ function startRender() {
     y = 0;
     RENDERING = true;
 }
+
+function compareFunc(a, b) { return (a < b) ? -1 : 1; }
 
 function screenToComplexCoords(x, y) {
     let realPerPixel = Math.abs(RE_START - RE_END) / window.innerWidth;
