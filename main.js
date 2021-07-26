@@ -16,6 +16,8 @@ let IM_END = IM_END_DEFAULT;
 let RE_START_NEW;
 let IM_START_NEW;
 
+let FRACTAL_FUNCTION = mandelbrot;
+
 const IDEAL_ASPECT = window.innerWidth / window.innerHeight;
 /* ------------------- */
 
@@ -117,7 +119,17 @@ document.getElementById("resetButton").onclick = function() {
     startRender();
 }
 document.getElementById("iterationsInputApply").onclick = function() {
-    let inp = parseInt(iterationsInput.value);
+    const fractalSelectButtons = document.getElementsByName("fractalSelect");
+    for (let i = 0; i < fractalSelectButtons.length; i++) {
+        if (fractalSelectButtons[i].checked) {
+            FRACTAL_FUNCTION = {
+                "Mandelbrot": mandelbrot,
+                "Burning ship": burningShip
+            }[fractalSelectButtons[i].value];
+            break;
+        }
+    }
+    const inp = parseInt(iterationsInput.value);
     if (inp != NaN && inp > 0) {
         MAX_ITER = inp;
         startRender();
@@ -179,7 +191,8 @@ function draw() {
                 for (let x = 0; x < canvas.width; x++) {
                     let real = RE_START + (x / canvas.width) * realDistance;
                     let imag = IM_START + (y / canvas.height) * imagDistance;
-                    let iters = mandelbrot(real, imag);
+                    //let iters = mandelbrot(real, imag);
+                    let iters = FRACTAL_FUNCTION(real, imag);
                     let [r, g, b] = setRBG(iters);
                     setPixel(x, y, r, g, b);
                 }
@@ -187,19 +200,6 @@ function draw() {
             }
         }
     }
-}
-
-function mandelbrot(real_constant, imag_constant) {
-    let iters = real = imag = 0;
-    let realSq, imagSq, newReal, newImag;
-    while ((realSq = real*real) + (imagSq = imag*imag) <= MOD_CONST && iters < MAX_ITER) {
-        newReal = realSq - imagSq + real_constant;
-        newImag = 2 * real * imag + imag_constant;
-        real = newReal;
-        imag = newImag;
-        iters++;
-    }
-    return iters;
 }
 
 setInterval(draw, DRAW_TICKRATE);

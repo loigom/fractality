@@ -7,34 +7,53 @@
     </head>
     <body>
         <div id="infoBox">
-            Zoom in by selecting region with mouse
-            <div class="infoElements">
-                Iterations:
-                <input id="iterationsInput" style="width: 20%;"></input>
+            <div class="infoBoxChild">
+                <!--  HEADER  -->
+                Zoom in by selecting region with mouse
+                <div class="infoElements">
+                    Iterations:
+                    <input id="iterationsInput" style="width: 20%;"></input>
+                </div>
+                <!--  /HEADER  -->
+            
+                <!--  BODY  -->
+                <div class="infoElements">
+                    <input type="checkbox" id="greyscaleCheckbox"></input>
+                    Greyscale
+                </div>
+                <div class="infoElements">
+                    <input type="checkbox" id="greenscaleCheckbox"></input>
+                    Greenscale
+                </div>
+                <div class="infoElements">
+                    <input type="checkbox" id="redscaleCheckbox"></input>
+                    Redscale
+                </div>
+                <div class="infoElements">
+                    <input type="checkbox" id="bluescaleCheckbox"></input>
+                    Bluescale
+                </div>
+                <hr>
+                <input type="radio" id="mandelbrot" name="fractalSelect" value="Mandelbrot" checked>
+                <label for="mandelbrot">Mandelbrot</label>
+                <br>
+                <input type="radio" id="burningShip" name="fractalSelect" value="Burning ship">
+                <label for="burningShip">Burning ship</label>
+                <hr>
+                <button id="resetButton">Reset</button>
+                <button id="iterationsInputApply">Apply</button>
+                <!--  /BODY  -->
+
+                <!--  FOOTER  -->
+                <a href="https://github.com/loigom/fractality" style="color:white; margin-left: 5%;">GitHub</a>
+                <!--  /FOOTER  -->
             </div>
-            <div class="infoElements">
-                <input type="checkbox" id="greyscaleCheckbox"></input>
-                Greyscale
-            </div>
-            <div class="infoElements">
-                <input type="checkbox" id="greenscaleCheckbox"></input>
-                Greenscale
-            </div>
-            <div class="infoElements">
-                <input type="checkbox" id="redscaleCheckbox"></input>
-                Redscale
-            </div>
-            <div class="infoElements">
-                <input type="checkbox" id="bluescaleCheckbox"></input>
-                Bluescale
-            </div>
-            <button id="resetButton">Reset</button>
-            <button id="iterationsInputApply">Apply</button>
-            <div></div>
-            <a href="https://github.com/Mothrakk/fractality" style="color:white;">GitHub</a>
         </div>
+
         <div id="region" hidden></div>
         <canvas id="canv"></canvas>
+        <script src="fractals.js"></script>
         <script src="main.js"></script>
+
     </body>
 </html>

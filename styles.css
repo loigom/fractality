@@ -17,6 +17,10 @@ body, html {
     border-radius: 2px;
 }
 
+.infoBoxChild {
+    position: relative;
+}
+
 .infoElements {
     margin: 2px;
 }
